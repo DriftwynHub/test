@@ -134,7 +134,6 @@ tabButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 tabButton.Size = UDim2.new(0, 121, 0, 45)
 
 -- Set custom position
-local baseY = 0.0129449842
 tabButton.Position = UDim2.new(0.0129449842, 0, 0.214285716 + (#self.Tabs * 0.08), 0)
 tabButton.AnchorPoint = Vector2.new(0, 0)
 
