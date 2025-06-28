@@ -122,9 +122,6 @@ function DriftwynTabSystem:Init()
 		line.Parent = MainFrame
 	end
 
-	makeLine("ButtomLogoFrame", UDim2.new(0, 6180, 6), UDim2.new(0, 121, 0, 2))
-	makeLine("LeftLogoFrame", UDim2.new({0, -2,0, 69), UDim2.new(0, 1, 0, 69))
-
 	local img = Instance.new("ImageLabel")
 	img.Name = "ImageLabel"
 	img.Parent = MainFrame
