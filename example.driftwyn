@@ -122,11 +122,14 @@ function DriftwynTabSystem:Init()
 		line.Parent = MainFrame
 	end
 
+	makeLine("ButtomLogoFrame", UDim2.new(0.0123, 0, 0.2085, 0), UDim2.new(0, 121, 0, 2))
+	makeLine("LeftLogoFrame", UDim2.new(0, -2, 0.0171, 0), UDim2.new(0, 1, 0, 69))
+
 	local img = Instance.new("ImageLabel")
 	img.Name = "ImageLabel"
 	img.Parent = MainFrame
 	img.Position = UDim2.new(0.0113, 0, 0.0171, 0)
-	img.Size = UDim2.new(0, 144,0, 66)
+	img.Size = UDim2.new(0, 121, 0, 68)
 	img.Image = "rbxassetid://76102331237811"
 	img.BackgroundTransparency = 1
 end
