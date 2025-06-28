@@ -1,0 +1,198 @@
+-- Driftwyn UI Module
+-- Place this in a ModuleScript and require it from a LocalScript
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+
+local DriftwynTabSystem = {
+	Tabs = {}
+}
+
+function DriftwynTabSystem:Init()
+	local DriftwynUI = Instance.new("ScreenGui")
+	DriftwynUI.Name = "DriftwynUI"
+	DriftwynUI.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+	DriftwynUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+	local MainFrame = Instance.new("Frame")
+	MainFrame.Name = "MainFrame"
+	MainFrame.Parent = DriftwynUI
+	MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+	MainFrame.Size = UDim2.new(0, 618, 0, 350)
+
+	local dragInput, dragStart, startPos
+	local dragging = false
+
+	MainFrame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			dragStart = input.Position
+			startPos = MainFrame.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	MainFrame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
+			dragInput = input
+		end
+	end)
+
+	game:GetService("UserInputService").InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			local delta = input.Position - dragStart
+			MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		end
+	end)
+
+	local UICorner = Instance.new("UICorner")
+	UICorner.CornerRadius = UDim.new(0, 6)
+	UICorner.Parent = MainFrame
+
+	local function makeBorder(name, color, pos, size)
+		local f = Instance.new("Frame")
+		f.Name = name
+		f.BackgroundColor3 = color
+		f.BorderSizePixel = 0
+		f.Position = pos
+		f.Size = size
+		f.Parent = MainFrame
+	end
+
+	makeBorder("TopFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0, 0, 0, 0), UDim2.new(0, 623, 0, 6))
+	makeBorder("LeftFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0, 0, 0.0171, 0), UDim2.new(0, 8, 0, 338))
+	makeBorder("ButtomFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0, 0, 0.9828, 0), UDim2.new(0, 618, 0, 6))
+	makeBorder("RightFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0.9953, 0, 0.0171, 0), UDim2.new(0, 8, 0, 344))
+
+	local Title = Instance.new("TextLabel")
+	Title.Name = "Title"
+	Title.Parent = MainFrame
+	Title.BackgroundTransparency = 1
+	Title.Position = UDim2.new(0.0129, 0, 0.0171, 0)
+	Title.Size = UDim2.new(1, 0, 0, 30)
+	Title.Font = Enum.Font.GothamBold
+	Title.Text = "Driftwyn Hub"
+	Title.TextColor3 = Color3.new(1, 1, 1)
+	Title.TextSize = 16
+
+	local ContentFrame = Instance.new("Frame")
+	ContentFrame.Name = "ContentFrame"
+	ContentFrame.Parent = MainFrame
+	ContentFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	ContentFrame.Position = UDim2.new(0, 108, 0, 36)
+	ContentFrame.Size = UDim2.new(0.9822, -100, 0.9657, -30)
+	self.ContentFrame = ContentFrame
+
+	local TabHolder = Instance.new("Frame")
+	TabHolder.Name = "TabHolder"
+	TabHolder.Parent = MainFrame
+	TabHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	TabHolder.Position = UDim2.new(0.0123, 0, 0.0171, 0)
+	TabHolder.Size = UDim2.new(0.0356, 100, 1.0514, -30)
+	self.TabHolder = TabHolder
+
+	local layout = Instance.new("UIListLayout")
+	layout.SortOrder = Enum.SortOrder.LayoutOrder
+	layout.Parent = TabHolder
+
+	local padding = Instance.new("UIPadding")
+	padding.PaddingTop = UDim.new(0, 75)
+	padding.PaddingLeft = UDim.new(0, 5)
+	padding.PaddingRight = UDim.new(0, 5)
+	padding.Parent = TabHolder
+
+	local function makeLine(name, pos, size)
+		local line = Instance.new("Frame")
+		line.Name = name
+		line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+		line.BorderSizePixel = 0
+		line.Position = pos
+		line.Size = size
+		line.Parent = MainFrame
+	end
+
+	makeLine("ButtomLogoFrame", UDim2.new(0.0123, 0, 0.2085, 0), UDim2.new(0, 121, 0, 2))
+	makeLine("LeftLogoFrame", UDim2.new(0.2080, 0, 0.0171, 0), UDim2.new(0, 1, 0, 69))
+
+	local img = Instance.new("ImageLabel")
+	img.Name = "ImageLabel"
+	img.Parent = MainFrame
+	img.Position = UDim2.new(0.0113, 0, 0.0171, 0)
+	img.Size = UDim2.new(0, 121, 0, 68)
+	img.Image = "rbxassetid://76102331237811"
+	img.BackgroundTransparency = 1
+end
+
+function DriftwynTabSystem:AddTab(name)
+	local tabButton = Instance.new("TextButton")
+	tabButton.Name = name .. "_Tab"
+	tabButton.Parent = self.TabHolder
+	tabButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	tabButton.Size = UDim2.new(0, 121, 0, 45)
+	tabButton.Font = Enum.Font.GothamBold
+	tabButton.Text = name
+	tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	tabButton.TextSize = 14
+
+	local corner = Instance.new("UICorner")
+	corner.Parent = tabButton
+
+	tabButton.MouseEnter:Connect(function()
+		TweenService:Create(tabButton, TweenInfo.new(0.15), {
+			BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+		}):Play()
+	end)
+	tabButton.MouseLeave:Connect(function()
+		TweenService:Create(tabButton, TweenInfo.new(0.15), {
+			BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+		}):Play()
+	end)
+
+	local tabFrame = Instance.new("Frame")
+	tabFrame.Name = name .. "_Content"
+	tabFrame.Size = UDim2.new(1, 0, 1, 0)
+	tabFrame.BackgroundTransparency = 1
+	tabFrame.Parent = self.ContentFrame
+	tabFrame.Visible = #self.Tabs == 0
+
+	tabButton.MouseButton1Click:Connect(function()
+		for _, tab in pairs(self.Tabs) do
+			tab.Frame.Visible = false
+		end
+		tabFrame.Visible = true
+	end)
+
+	local elements = {}
+
+	function elements:AddButton(text, callback)
+		local index = #elements
+		local btn = Instance.new("TextButton")
+		btn.Parent = tabFrame
+		btn.Size = UDim2.new(0, 200, 0, 30)
+		btn.Position = UDim2.new(0.0129, 0, 0, 75 + (index * 35))
+		btn.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+		btn.TextColor3 = Color3.new(1, 1, 1)
+		btn.Font = Enum.Font.Gotham
+		btn.Text = text
+		btn.TextSize = 14
+		btn.BorderSizePixel = 0
+
+		btn.MouseButton1Click:Connect(function()
+			pcall(callback)
+		end)
+
+		table.insert(elements, btn)
+	end
+
+	table.insert(self.Tabs, { Name = name, Frame = tabFrame })
+	return elements
+end
+
+return DriftwynTabSystem
