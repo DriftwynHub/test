@@ -21,7 +21,6 @@ function DriftwynTabSystem:Init()
 	MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 	MainFrame.Size = UDim2.new(0, 618, 0, 350)
 
-	-- Make MainFrame draggable
 	local dragging, dragInput, dragStart, startPos
 	MainFrame.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -151,6 +150,11 @@ function DriftwynTabSystem:AddTab(name)
 	tabFrame.Parent = self.ContentFrame
 	tabFrame.Visible = #self.Tabs == 0
 
+	local layout = Instance.new("UIListLayout")
+	layout.Parent = tabFrame
+	layout.SortOrder = Enum.SortOrder.LayoutOrder
+	layout.Padding = UDim.new(0, 8)
+
 	tabButton.MouseButton1Click:Connect(function()
 		for _, tab in pairs(self.Tabs) do
 			tab.Frame.Visible = false
@@ -161,11 +165,9 @@ function DriftwynTabSystem:AddTab(name)
 	local elements = {}
 
 	function elements:AddButton(text, callback)
-		local index = #elements
 		local btn = Instance.new("TextButton")
 		btn.Parent = tabFrame
 		btn.Size = UDim2.new(0, 200, 0, 30)
-		btn.Position = UDim2.new(0.0129, 0, 0, 75 + (index * 35))
 		btn.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
 		btn.TextColor3 = Color3.new(1, 1, 1)
 		btn.Font = Enum.Font.Gotham
@@ -176,16 +178,12 @@ function DriftwynTabSystem:AddTab(name)
 		btn.MouseButton1Click:Connect(function()
 			pcall(callback)
 		end)
-
-		table.insert(elements, btn)
 	end
 
 	function elements:AddToggle(title, defaultState, callback)
-		local index = #elements
 		local container = Instance.new("Frame")
 		container.Parent = tabFrame
 		container.Size = UDim2.new(0, 250, 0, 30)
-		container.Position = UDim2.new(0.0129, 0, 0, 75 + (index * 35))
 		container.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 		container.BorderSizePixel = 0
 
@@ -228,8 +226,6 @@ function DriftwynTabSystem:AddTab(name)
 				pcall(callback, state)
 			end
 		end)
-
-		table.insert(elements, container)
 	end
 
 	table.insert(self.Tabs, { Name = name, Frame = tabFrame })
