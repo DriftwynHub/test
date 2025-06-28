@@ -1,6 +1,4 @@
 -- Driftwyn UI Module
--- Place this in a ModuleScript and require it from a LocalScript
-
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -180,6 +178,58 @@ function DriftwynTabSystem:AddTab(name)
 		end)
 
 		table.insert(elements, btn)
+	end
+
+	function elements:AddToggle(title, defaultState, callback)
+		local index = #elements
+		local container = Instance.new("Frame")
+		container.Parent = tabFrame
+		container.Size = UDim2.new(0, 250, 0, 30)
+		container.Position = UDim2.new(0.0129, 0, 0, 75 + (index * 35))
+		container.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+		container.BorderSizePixel = 0
+
+		local corner = Instance.new("UICorner")
+		corner.CornerRadius = UDim.new(0, 6)
+		corner.Parent = container
+
+		local titleLabel = Instance.new("TextLabel")
+		titleLabel.Parent = container
+		titleLabel.Text = title
+		titleLabel.Size = UDim2.new(0, 180, 1, 0)
+		titleLabel.Position = UDim2.new(0, 10, 0, 0)
+		titleLabel.Font = Enum.Font.Gotham
+		titleLabel.TextSize = 14
+		titleLabel.TextColor3 = Color3.new(1, 1, 1)
+		titleLabel.BackgroundTransparency = 1
+		titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+		local toggleButton = Instance.new("TextButton")
+		toggleButton.Parent = container
+		toggleButton.Size = UDim2.new(0, 30, 0, 30)
+		toggleButton.Position = UDim2.new(1, -40, 0, 0)
+		toggleButton.Font = Enum.Font.GothamBold
+		toggleButton.TextSize = 20
+		toggleButton.TextColor3 = Color3.new(1, 1, 1)
+		toggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+		toggleButton.BorderSizePixel = 0
+		toggleButton.Text = defaultState and "[✓]" or "[ ]"
+
+		local toggleCorner = Instance.new("UICorner")
+		toggleCorner.CornerRadius = UDim.new(0, 4)
+		toggleCorner.Parent = toggleButton
+
+		local state = defaultState
+
+		toggleButton.MouseButton1Click:Connect(function()
+			state = not state
+			toggleButton.Text = state and "[✓]" or "[ ]"
+			if callback then
+				pcall(callback, state)
+			end
+		end)
+
+		table.insert(elements, container)
 	end
 
 	table.insert(self.Tabs, { Name = name, Frame = tabFrame })
