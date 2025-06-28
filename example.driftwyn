@@ -94,12 +94,12 @@ function DriftwynTabSystem:Init()
 	TabHolder.Name = "TabHolder"
 	TabHolder.Parent = MainFrame
 	TabHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	TabHolder.Position = UDim2.new(0.0123, 0, 0.0171, 0)
+	TabHolder.Position = UDim2.new(0.0123, 0, 0.2085, 0)
 	TabHolder.Size = UDim2.new(0.0356, 100, 1.0514, -30)
 	self.TabHolder = TabHolder
 
 	local padding = Instance.new("UIPadding")
-	padding.PaddingTop = UDim.new(0, 75)
+	padding.PaddingTop = UDim.new(0, 5)
 	padding.PaddingLeft = UDim.new(0, 5)
 	padding.PaddingRight = UDim.new(0, 5)
 	padding.Parent = TabHolder
@@ -130,13 +130,9 @@ function DriftwynTabSystem:AddTab(name)
 	local tabButton = Instance.new("TextButton")
 	tabButton.Name = name .. "_Tab"
 	tabButton.Parent = self.TabHolder
-tabButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-tabButton.Size = UDim2.new(0, 121, 0, 45)
-
--- Set custom position
-tabButton.Position = UDim2.new(0.0129449842, 0, 0.214285716 + (#self.Tabs * 0.08), 0)
-tabButton.AnchorPoint = Vector2.new(0, 0)
-
+	tabButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	tabButton.Size = UDim2.new(0, 121, 0, 45)
+	tabButton.Position = UDim2.new(0, 0, 0, (#self.Tabs * 50))
 	tabButton.Font = Enum.Font.GothamBold
 	tabButton.Text = name
 	tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
