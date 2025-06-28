@@ -68,8 +68,8 @@ function DriftwynTabSystem:Init()
 
 	makeBorder("TopFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0, 0, 0, 0), UDim2.new(0, 623, 0, 6))
 	makeBorder("LeftFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0, 0, 0.0171, 0), UDim2.new(0, 8, 0, 338))
-	makeBorder("ButtomFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0, 0, 0.9828, 0), UDim2.new(0, 618, 0, 6))
 	makeBorder("RightFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0.9953, 0, 0.0171, 0), UDim2.new(0, 8, 0, 344))
+	makeBorder("ButtomFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0, 0, 0.9828, 0), UDim2.new(0, 618, 0, 6))
 
 	local Title = Instance.new("TextLabel")
 	Title.Name = "Title"
@@ -112,24 +112,11 @@ function DriftwynTabSystem:Init()
 	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	layout.VerticalAlignment = Enum.VerticalAlignment.Top
 
-	local function makeLine(name, pos, size)
-		local line = Instance.new("Frame")
-		line.Name = name
-		line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-		line.BorderSizePixel = 0
-		line.Position = pos
-		line.Size = size
-		line.Parent = MainFrame
-	end
-
-	makeLine("ButtomLogoFrame", UDim2.new(0.0123, 0, 0.2085, 0), UDim2.new(0, 121, 0, 2))
-	makeLine("LeftLogoFrame", UDim2.new(0, -2, 0.0171, 0), UDim2.new(0, 1, 0, 69))
-
 	local img = Instance.new("ImageLabel")
 	img.Name = "ImageLabel"
 	img.Parent = MainFrame
 	img.Position = UDim2.new(0.0113, 0, 0.0171, 0)
-	img.Size = UDim2.new(0, 121, 0, 68)
+	img.Size = UDim2.new(0, 144, 0, 66)
 	img.Image = "rbxassetid://76102331237811"
 	img.BackgroundTransparency = 1
 end
