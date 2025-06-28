@@ -95,7 +95,7 @@ function DriftwynTabSystem:Init()
 	TabHolder.Parent = MainFrame
 	TabHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 	TabHolder.Position = UDim2.new(0.0123, 0, 0.2085, 0)
-	TabHolder.Size = UDim2.new({0.036, 100},{0.854, -30})
+	TabHolder.Size = UDim2.new(0.036, 100, 0.854, -30)
 	self.TabHolder = TabHolder
 
 	local padding = Instance.new("UIPadding")
@@ -108,6 +108,9 @@ function DriftwynTabSystem:Init()
 	layout.Parent = TabHolder
 	layout.SortOrder = Enum.SortOrder.LayoutOrder
 	layout.Padding = UDim.new(0, 5)
+	layout.FillDirection = Enum.FillDirection.Vertical
+	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	layout.VerticalAlignment = Enum.VerticalAlignment.Top
 
 	local function makeLine(name, pos, size)
 		local line = Instance.new("Frame")
