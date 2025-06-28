@@ -139,7 +139,7 @@ function DriftwynTabSystem:AddTab(name)
 	tabButton.Name = name .. "_Tab"
 	tabButton.Parent = self.TabHolder
 	tabButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	tabButton.Size = UDim2.new(0, 121, 0, 45)
+	tabButton.Size = UDim2.new(1, -10, 0, 45)
 	tabButton.Font = Enum.Font.GothamBold
 	tabButton.Text = name
 	tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
