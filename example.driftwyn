@@ -104,6 +104,11 @@ function DriftwynTabSystem:Init()
 	padding.PaddingRight = UDim.new(0, 5)
 	padding.Parent = TabHolder
 
+	local layout = Instance.new("UIListLayout")
+	layout.Parent = TabHolder
+	layout.SortOrder = Enum.SortOrder.LayoutOrder
+	layout.Padding = UDim.new(0, 5)
+
 	local function makeLine(name, pos, size)
 		local line = Instance.new("Frame")
 		line.Name = name
@@ -132,7 +137,6 @@ function DriftwynTabSystem:AddTab(name)
 	tabButton.Parent = self.TabHolder
 	tabButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 	tabButton.Size = UDim2.new(0, 121, 0, 45)
-	tabButton.Position = UDim2.new(0, 0, 0, (#self.Tabs * 50))
 	tabButton.Font = Enum.Font.GothamBold
 	tabButton.Text = name
 	tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
