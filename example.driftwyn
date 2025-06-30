@@ -164,6 +164,102 @@ function DriftwynTabSystem:AddTab(name)
 
 	local elements = {}
 
+function elements:AddSlider(title, minValue, maxValue, defaultValue, callback)
+	local index = #elements
+	local container = Instance.new("Frame")
+	container.Parent = tabFrame
+	container.Size = UDim2.new(0, 250, 0, 40)
+	container.Position = UDim2.new(0.0129, 0, 0, 75 + (index * 45))
+	container.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	container.BorderSizePixel = 0
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 6)
+	corner.Parent = container
+
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Parent = container
+	titleLabel.Text = title .. ": " .. tostring(defaultValue)
+	titleLabel.Size = UDim2.new(1, -10, 0, 20)
+	titleLabel.Position = UDim2.new(0, 5, 0, 0)
+	titleLabel.Font = Enum.Font.Gotham
+	titleLabel.TextSize = 14
+	titleLabel.TextColor3 = Color3.new(1, 1, 1)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+	local sliderBar = Instance.new("Frame")
+	sliderBar.Parent = container
+	sliderBar.Size = UDim2.new(0, 200, 0, 6)
+	sliderBar.Position = UDim2.new(0, 10, 0, 25)
+	sliderBar.BackgroundColor3 = Color3.fromRGB(57, 57, 57)
+	sliderBar.BorderSizePixel = 0
+	local barCorner = Instance.new("UICorner", sliderBar)
+
+	local fillBar = Instance.new("Frame")
+	fillBar.Parent = sliderBar
+	fillBar.Size = UDim2.new(0, 0, 1, 0)
+	fillBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+	fillBar.BorderSizePixel = 0
+	local fillCorner = Instance.new("UICorner", fillBar)
+
+	local knob = Instance.new("TextButton")
+	knob.Parent = sliderBar
+	knob.Size = UDim2.new(0, 20, 0, 20)
+	knob.Position = UDim2.new(0, 0, -0.9, 0)
+	knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	knob.BorderSizePixel = 0
+	knob.Text = ""
+	local knobCorner = Instance.new("UICorner", knob)
+	knobCorner.CornerRadius = UDim.new(1, 0)
+
+	local dragging = false
+	local UserInputService = game:GetService("UserInputService")
+
+	local function updateSlider(inputX)
+		local sliderPos = sliderBar.AbsolutePosition.X
+		local sliderSize = sliderBar.AbsoluteSize.X
+		local relativeX = math.clamp(inputX - sliderPos, 0, sliderSize)
+		local percent = relativeX / sliderSize
+		local value = math.floor(minValue + (maxValue - minValue) * percent)
+
+		fillBar.Size = UDim2.new(0, relativeX, 1, 0)
+		knob.Position = UDim2.new(0, relativeX - knob.Size.X.Offset / 2, -0.9, 0)
+
+		titleLabel.Text = title .. ": " .. tostring(value)
+
+		if callback then
+			pcall(callback, value)
+		end
+	end
+
+	knob.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+		end
+	end)
+
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			updateSlider(input.Position.X)
+		end
+	end)
+
+	-- Set to default
+	task.wait()
+	local sliderSize = sliderBar.AbsoluteSize.X
+	local percent = (defaultValue - minValue) / (maxValue - minValue)
+	updateSlider(sliderBar.AbsolutePosition.X + sliderSize * percent)
+
+	table.insert(elements, container)
+end
+
 	function elements:AddButton(text, callback)
 		local btn = Instance.new("TextButton")
 		btn.Parent = tabFrame
