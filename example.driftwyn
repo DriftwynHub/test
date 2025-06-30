@@ -296,7 +296,7 @@ end
 		titleLabel.Parent = container
 		titleLabel.Text = title
 		titleLabel.Size = UDim2.new(0, 180, 1, 0)
-		titleLabel.Position = UDim2.new(0, 10, 0, 0)
+		titleLabel.Position = UDim2.new(0, 15, 0, 0)
 		titleLabel.Font = Enum.Font.Gotham
 		titleLabel.TextSize = 14
 		titleLabel.TextColor3 = Color3.new(1, 1, 1)
