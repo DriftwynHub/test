@@ -170,6 +170,104 @@ function DriftwynTabSystem:AddTab(name)
 
 	local elements = {}
 
+function elements:AddDropdown(title, options, callback)
+	local container = Instance.new("Frame")
+	container.Parent = tabFrame
+	container.Size = UDim2.new(0, 250, 0, 35)
+	container.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	container.BorderSizePixel = 0
+
+	local corner = Instance.new("UICorner", container)
+	corner.CornerRadius = UDim.new(0, 6)
+
+	local dropdownButton = Instance.new("TextButton")
+	dropdownButton.Parent = container
+	dropdownButton.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
+	dropdownButton.Size = UDim2.new(1, -35, 1, 0)
+	dropdownButton.Position = UDim2.new(0, 5, 0, 0)
+	dropdownButton.Text = "[Select]"
+	dropdownButton.TextColor3 = Color3.new(1, 1, 1)
+	dropdownButton.TextSize = 14
+	dropdownButton.Font = Enum.Font.Gotham
+	dropdownButton.BorderSizePixel = 0
+
+	local dropdownCorner = Instance.new("UICorner", dropdownButton)
+	dropdownCorner.CornerRadius = UDim.new(0, 4)
+
+	local arrow = Instance.new("TextLabel")
+	arrow.Parent = container
+	arrow.Text = "▾"
+	arrow.Font = Enum.Font.GothamBold
+	arrow.TextSize = 14
+	arrow.TextColor3 = Color3.fromRGB(200, 200, 200)
+	arrow.BackgroundTransparency = 1
+	arrow.Size = UDim2.new(0, 20, 1, 0)
+	arrow.Position = UDim2.new(1, -25, 0, 0)
+
+	local dropdownFrame = Instance.new("Frame")
+	dropdownFrame.Parent = container
+	dropdownFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	dropdownFrame.Position = UDim2.new(0, 0, 1, 5)
+	dropdownFrame.Size = UDim2.new(1, 0, 0, 100)
+	dropdownFrame.ClipsDescendants = true
+	dropdownFrame.Visible = false
+	dropdownFrame.ZIndex = 2
+
+	local dropdownCornerFrame = Instance.new("UICorner", dropdownFrame)
+	dropdownCornerFrame.CornerRadius = UDim.new(0, 4)
+
+	local scroll = Instance.new("ScrollingFrame")
+	scroll.Parent = dropdownFrame
+	scroll.BackgroundTransparency = 1
+	scroll.BorderSizePixel = 0
+	scroll.Size = UDim2.new(1, 0, 1, 0)
+	scroll.CanvasSize = UDim2.new(0, 0, 0, #options * 25)
+	scroll.ScrollBarThickness = 4
+
+	local listLayout = Instance.new("UIListLayout", scroll)
+	listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	listLayout.Padding = UDim.new(0, 4)
+
+	for _, opt in ipairs(options) do
+		local item = Instance.new("TextButton")
+		item.Parent = scroll
+		item.Size = UDim2.new(1, -8, 0, 24)
+		item.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+		item.TextColor3 = Color3.new(1, 1, 1)
+		item.Text = opt
+		item.Font = Enum.Font.Gotham
+		item.TextSize = 13
+		item.BorderSizePixel = 0
+
+		local itemCorner = Instance.new("UICorner", item)
+		itemCorner.CornerRadius = UDim.new(0, 4)
+
+		item.MouseButton1Click:Connect(function()
+			dropdownButton.Text = opt
+			dropdownFrame.Visible = false
+			if callback then
+				pcall(callback, opt)
+			end
+		end)
+	end
+
+	dropdownButton.MouseButton1Click:Connect(function()
+		dropdownFrame.Visible = not dropdownFrame.Visible
+	end)
+
+	-- Auto close if clicked outside
+	game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+		if not gameProcessed and dropdownFrame.Visible then
+			local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+			local inButton = dropdownButton.AbsolutePosition
+			local inSize = dropdownButton.AbsoluteSize
+			if not (mouse.X > inButton.X and mouse.X < inButton.X + inSize.X and mouse.Y > inButton.Y and mouse.Y < inButton.Y + inSize.Y) then
+				dropdownFrame.Visible = false
+			end
+		end
+	end)
+end
+
 function elements:AddSlider(title, minValue, maxValue, defaultValue, callback)
 	local index = #elements
 	local container = Instance.new("Frame")
