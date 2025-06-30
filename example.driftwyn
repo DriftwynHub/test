@@ -147,6 +147,12 @@ function DriftwynTabSystem:AddTab(name)
 	tabFrame.Name = name .. "_Content"
 	tabFrame.Size = UDim2.new(1, 0, 1, 0)
 	tabFrame.BackgroundTransparency = 1
+	local padding = Instance.new("UIPadding")
+	padding.PaddingTop = UDim.new(0, 10)
+	padding.PaddingLeft = UDim.new(0, 10)
+	padding.PaddingRight = UDim.new(0, 10)
+	padding.Parent = tabFrame
+
 	tabFrame.Parent = self.ContentFrame
 	tabFrame.Visible = #self.Tabs == 0
 
@@ -169,7 +175,6 @@ function elements:AddSlider(title, minValue, maxValue, defaultValue, callback)
 	local container = Instance.new("Frame")
 	container.Parent = tabFrame
 	container.Size = UDim2.new(0, 250, 0, 40)
-	container.Position = UDim2.new(0.0129, 0, 0, 75 + (index * 45))
 	container.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 	container.BorderSizePixel = 0
 
