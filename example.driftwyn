@@ -1,433 +1,505 @@
--- Driftwyn UI Module
-local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
+--[[
+		Example Compkiller UI
+	
+	Author: 4lpaca
+	
+	Press Left Alt to open / close
+]]
 
-local DriftwynTabSystem = {
-	Tabs = {}
-}
+local Compkiller = loadstring(game:HttpGet("https://raw.githubusercontent.com/4lpaca-pin/CompKiller/refs/heads/main/src/source.luau"))();
 
-function DriftwynTabSystem:Init()
-	local DriftwynUI = Instance.new("ScreenGui")
-	DriftwynUI.Name = "DriftwynUI"
-	DriftwynUI.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
-	DriftwynUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+-- Create Notification --
+local Notifier = Compkiller.newNotify();
 
-	local MainFrame = Instance.new("Frame")
-	MainFrame.Name = "MainFrame"
-	MainFrame.Parent = DriftwynUI
-	MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-	MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-	MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-	MainFrame.Size = UDim2.new(0, 618, 0, 350)
+-- Create Config Mamager --
+local ConfigManager = Compkiller:ConfigManager({
+	Directory = "Compkiller-UI",
+	Config = "Example-Configs"
+});
 
-	local dragging, dragInput, dragStart, startPos
-	MainFrame.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-			dragging = true
-			dragStart = input.Position
-			startPos = MainFrame.Position
+-- Loading UI (Icon <string> , Duration <number>) --
+Compkiller:Loader("rbxassetid://109700863387451" , 2.5).yield();
 
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
-					dragging = false
-				end
-			end)
-		end
-	end)
+-- Creating Window --
+local Window = Compkiller.new({
+	Name = "COMPKILLER",
+	Keybind = "LeftAlt",
+	Logo = "rbxassetid://109700863387451",
+	Scale = Compkiller.Scale.Window, -- Leave blank if you want automatic scale [PC, Mobile].
+	TextSize = 15,
+});
 
-	MainFrame.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement then
-			dragInput = input
-		end
-	end)
+-- Notification --
 
-	UserInputService.InputChanged:Connect(function(input)
-		if input == dragInput and dragging then
-			local delta = input.Position - dragStart
-			MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-		end
-	end)
+Notifier.new({
+	Title = "Notification",
+	Content = "Thank you for use this script!",
+	Duration = 10,
+	Icon = "rbxassetid://109700863387451"
+});
 
-	local UICorner = Instance.new("UICorner")
-	UICorner.CornerRadius = UDim.new(0, 6)
-	UICorner.Parent = MainFrame
+-- Watermark --
+local Watermark = Window:Watermark();
 
-	local function makeBorder(name, color, pos, size)
-		local f = Instance.new("Frame")
-		f.Name = name
-		f.BackgroundColor3 = color
-		f.BorderSizePixel = 0
-		f.Position = pos
-		f.Size = size
-		f.Parent = MainFrame
+Watermark:AddText({
+	Icon = "user",
+	Text = "4lpaca",
+});
+
+Watermark:AddText({
+	Icon = "clock",
+	Text = Compkiller:GetDate(),
+});
+
+local Time = Watermark:AddText({
+	Icon = "timer",
+	Text = "TIME",
+});
+
+task.spawn(function()
+	while true do task.wait()
+		Time:SetText(Compkiller:GetTimeNow());
 	end
+end)
 
-	makeBorder("TopFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0, 0, 0, 0), UDim2.new(0, 623, 0, 6))
-	makeBorder("LeftFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0, 0, 0.0171, 0), UDim2.new(0, 8, 0, 338))
-	makeBorder("RightFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0.9953, 0, 0.0171, 0), UDim2.new(0, 8, 0, 344))
-	makeBorder("ButtomFrame", Color3.fromRGB(255, 0, 0), UDim2.new(0, 0, 0.9828, 0), UDim2.new(0, 618, 0, 6))
+Watermark:AddText({
+	Icon = "server",
+	Text = Compkiller.Version,
+});
 
-	local Title = Instance.new("TextLabel")
-	Title.Name = "Title"
-	Title.Parent = MainFrame
-	Title.BackgroundTransparency = 1
-	Title.Position = UDim2.new(0.0129, 0, 0.0171, 0)
-	Title.Size = UDim2.new(1, 0, 0, 30)
-	Title.Font = Enum.Font.GothamBold
-	Title.Text = "Driftwyn Hub"
-	Title.TextColor3 = Color3.new(1, 1, 1)
-	Title.TextSize = 16
+-- Creating Tab Category --
+Window:DrawCategory({
+	Name = "Example"
+});
 
-	local ContentFrame = Instance.new("Frame")
-	ContentFrame.Name = "ContentFrame"
-	ContentFrame.Parent = MainFrame
-	ContentFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-	ContentFrame.Position = UDim2.new(0, 108, 0, 36)
-	ContentFrame.Size = UDim2.new(0.9822, -100, 0.9657, -30)
-	self.ContentFrame = ContentFrame
+-- Creating Tab --
+local NormalTab = Window:DrawTab({
+	Name = "Example Tab",
+	Icon = "apple",
+	EnableScrolling = true
+});
 
-	local TabHolder = Instance.new("Frame")
-	TabHolder.Name = "TabHolder"
-	TabHolder.Parent = MainFrame
-	TabHolder.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	TabHolder.Position = UDim2.new(0.0123, 0, 0.2143, 0)
-	TabHolder.Size = UDim2.new(0.0712, 100, 0.854, -30)
-	self.TabHolder = TabHolder
+-- Creating Section --
+local NormalSection = NormalTab:DrawSection({
+	Name = "Section",
+	Position = 'left'	
+});
 
-	local padding = Instance.new("UIPadding")
-	padding.PaddingTop = UDim.new(0, 5)
-	padding.PaddingLeft = UDim.new(0, 5)
-	padding.PaddingRight = UDim.new(0, 5)
-	padding.Parent = TabHolder
+local Toggle = NormalSection:AddToggle({
+	Name = "Toggle",
+	Flag = "Toggle_Example", -- Leave it blank will not save to config
+	Default = false,
+	Callback = print,
+});
 
-	local layout = Instance.new("UIListLayout")
-	layout.Parent = TabHolder
-	layout.SortOrder = Enum.SortOrder.LayoutOrder
-	layout.Padding = UDim.new(0, 5)
-	layout.FillDirection = Enum.FillDirection.Vertical
-	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	layout.VerticalAlignment = Enum.VerticalAlignment.Top
+-- Add Keybind To Toggle --
+local Keybind = Toggle.Link:AddKeybind({
+	Default = "E",
+	Flag = "Option_Keybind",
+	Callback = print
+});
 
-	local img = Instance.new("ImageLabel")
-	img.Name = "ImageLabel"
-	img.Parent = MainFrame
-	img.Position = UDim2.new(0.0129, 0, 0.02, 0)
-	img.Size = UDim2.new(0, 144, 0, 66)
-	img.Image = "rbxassetid://76102331237811"
-	img.BackgroundTransparency = 1
+-- Helper --
+Toggle.Link:AddHelper({
+	Text = "Very cool toggle!"
+})
+
+-- Add Option To Toggle --
+local Toggle2 = NormalSection:AddToggle({
+	Name = "Toggle",
+	Flag = "Toggle_Example2", -- Leave it blank will not save to config
+	Default = false,
+	Callback = print,
+});
+
+local Option = Toggle2.Link:AddOption()
+
+Option:AddToggle({
+	Name= "Example",
+	Flag = "Toggle_Example3",
+	Callback = print
+});
+
+do
+	local Toggle2 = NormalSection:AddToggle({
+		Name = "Risky Feature",
+		Flag = "Toggle_Example5", -- Leave it blank will not save to config
+		Default = false,
+		Risky = true,
+		Callback = print,
+	});
+
+	local Option = Toggle2.Link:AddOption()
+
+	Option:AddToggle({
+		Risky = true,
+		Name= "Risky Feature",
+		Flag = "Toggle_Example6",
+		Callback = print
+	});
 end
 
-function DriftwynTabSystem:AddTab(name)
-	local tabButton = Instance.new("TextButton")
-	tabButton.Name = name .. "_Tab"
-	tabButton.Parent = self.TabHolder
-	tabButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	tabButton.Size = UDim2.new(1, -10, 0, 45)
-	tabButton.Font = Enum.Font.GothamBold
-	tabButton.Text = name
-	tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-	tabButton.TextSize = 14
+NormalSection:AddKeybind({
+	Name = "Keybind",
+	Default = "LeftAlt",
+	Flag = "Keybind_Example",
+	Callback = print,
+});
 
-	local corner = Instance.new("UICorner")
-	corner.Parent = tabButton
+NormalSection:AddSlider({
+	Name = "Slider",
+	Min = 0,
+	Max = 100,
+	Default = 50,
+	Round = 0,
+	Flag = "Slider_Example",
+	Callback = print
+});
 
-	tabButton.MouseEnter:Connect(function()
-		TweenService:Create(tabButton, TweenInfo.new(0.15), {
-			BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-		}):Play()
-	end)
-	tabButton.MouseLeave:Connect(function()
-		TweenService:Create(tabButton, TweenInfo.new(0.15), {
-			BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-		}):Play()
-	end)
+NormalSection:AddColorPicker({
+	Name = "ColorPicker",
+	Default = Color3.fromRGB(0, 255, 140),
+	Flag = "Color_Picker_Example",
+	Callback = print
+})
 
-	local tabFrame = Instance.new("Frame")
-	tabFrame.Name = name .. "_Content"
-	tabFrame.Size = UDim2.new(1, 0, 1, 0)
-	tabFrame.BackgroundTransparency = 1
-	local padding = Instance.new("UIPadding")
-	padding.PaddingTop = UDim.new(0, 10)
-	padding.PaddingLeft = UDim.new(0, 10)
-	padding.PaddingRight = UDim.new(0, 10)
-	padding.Parent = tabFrame
+NormalSection:AddDropdown({
+	Name = "Single Dropdown",
+	Default = "Head",
+	Flag = "Single_Dropdown",
+	Values = {"Head","Body","Arms","Legs"},
+	Callback = print
+})
 
-	tabFrame.Parent = self.ContentFrame
-	tabFrame.Visible = #self.Tabs == 0
+NormalSection:AddDropdown({
+	Name = "Multi Dropdown",
+	Default = {"Head"},
+	Multi = true,
+	Flag = "Multi_Dropdown",
+	Values = {"Head","Body","Arms","Legs"},
+	Callback = print
+})
 
-	local layout = Instance.new("UIListLayout")
-	layout.Parent = tabFrame
-	layout.SortOrder = Enum.SortOrder.LayoutOrder
-	layout.Padding = UDim.new(0, 8)
+NormalSection:AddButton({
+	Name = "Button",
+	Callback = function()
+		print('PRINT!')
+	end,
+})
 
-	tabButton.MouseButton1Click:Connect(function()
-		for _, tab in pairs(self.Tabs) do
-			tab.Frame.Visible = false
-		end
-		tabFrame.Visible = true
-	end)
+NormalSection:AddParagraph({
+	Title = "Paragraph",
+	Content = "Very cool paragraph\nAll element in this scrtion\nwill be saved to the config!"
+})
 
-	local elements = {}
+NormalSection:AddTextBox({
+	Name = "Textbox",
+	Placeholder = "Placeholder",
+	Default = "Hello, World",
+	Callback = print
+})
 
-function elements:AddDropdown(title, options, callback)
-	local container = Instance.new("Frame")
-	container.Parent = tabFrame
-	container.Size = UDim2.new(0, 250, 0, 35)
-	container.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-	container.BorderSizePixel = 0
+local DrawElements = function(Tab,Position)
+	do
+		local NormalSectionRight = Tab:DrawSection({
+			Name = "Section",
+			Position = Position
+		});
 
-	local corner = Instance.new("UICorner", container)
-	corner.CornerRadius = UDim.new(0, 6)
+		local Toggle = NormalSectionRight:AddToggle({
+			Name = "Toggle",
+			Default = false,
+			Callback = print,
+		});
 
-	local dropdownButton = Instance.new("TextButton")
-	dropdownButton.Parent = container
-	dropdownButton.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
-	dropdownButton.Size = UDim2.new(1, -35, 1, 0)
-	dropdownButton.Position = UDim2.new(0, 5, 0, 0)
-	dropdownButton.Text = "[Select]"
-	dropdownButton.TextColor3 = Color3.new(1, 1, 1)
-	dropdownButton.TextSize = 14
-	dropdownButton.Font = Enum.Font.Gotham
-	dropdownButton.BorderSizePixel = 0
+		-- Add Keybind To Toggle --
+		local Keybind = Toggle.Link:AddKeybind({
+			Default = "E",
+			Callback = print
+		});
 
-	local dropdownCorner = Instance.new("UICorner", dropdownButton)
-	dropdownCorner.CornerRadius = UDim.new(0, 4)
+		-- Add Option To Toggle --
+		local Toggle2 = NormalSectionRight:AddToggle({
+			Name = "Toggle",
+			Default = false,
+			Callback = print,
+		});
 
-	local arrow = Instance.new("TextLabel")
-	arrow.Parent = container
-	arrow.Text = "▾"
-	arrow.Font = Enum.Font.GothamBold
-	arrow.TextSize = 14
-	arrow.TextColor3 = Color3.fromRGB(200, 200, 200)
-	arrow.BackgroundTransparency = 1
-	arrow.Size = UDim2.new(0, 20, 1, 0)
-	arrow.Position = UDim2.new(1, -25, 0, 0)
+		local Option = Toggle2.Link:AddOption()
 
-	local dropdownFrame = Instance.new("Frame")
-	dropdownFrame.Parent = container
-	dropdownFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	dropdownFrame.Position = UDim2.new(0, 0, 1, 5)
-	dropdownFrame.Size = UDim2.new(1, 0, 0, 100)
-	dropdownFrame.ClipsDescendants = true
-	dropdownFrame.Visible = false
-	dropdownFrame.ZIndex = 2
+		Option:AddToggle({
+			Name= "Example",
+			Callback = print
+		});
 
-	local dropdownCornerFrame = Instance.new("UICorner", dropdownFrame)
-	dropdownCornerFrame.CornerRadius = UDim.new(0, 4)
+		NormalSectionRight:AddKeybind({
+			Name = "Keybind",
+			Default = "LeftAlt",
+			Callback = print,
+		});
 
-	local scroll = Instance.new("ScrollingFrame")
-	scroll.Parent = dropdownFrame
-	scroll.BackgroundTransparency = 1
-	scroll.BorderSizePixel = 0
-	scroll.Size = UDim2.new(1, 0, 1, 0)
-	scroll.CanvasSize = UDim2.new(0, 0, 0, #options * 25)
-	scroll.ScrollBarThickness = 4
+		NormalSectionRight:AddSlider({
+			Name = "Slider",
+			Min = 0,
+			Max = 100,
+			Default = 50,
+			Round = 0,
+			Callback = print
+		});
 
-	local listLayout = Instance.new("UIListLayout", scroll)
-	listLayout.SortOrder = Enum.SortOrder.LayoutOrder
-	listLayout.Padding = UDim.new(0, 4)
+		NormalSectionRight:AddColorPicker({
+			Name = "ColorPicker",
+			Default = Color3.fromRGB(0, 255, 140),
+			Callback = print
+		})
 
-	for _, opt in ipairs(options) do
-		local item = Instance.new("TextButton")
-		item.Parent = scroll
-		item.Size = UDim2.new(1, -8, 0, 24)
-		item.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-		item.TextColor3 = Color3.new(1, 1, 1)
-		item.Text = opt
-		item.Font = Enum.Font.Gotham
-		item.TextSize = 13
-		item.BorderSizePixel = 0
+		NormalSectionRight:AddDropdown({
+			Name = "Single Dropdown",
+			Default = "Head",
+			Values = {"Head","Body","Arms","Legs"},
+			Callback = print
+		})
 
-		local itemCorner = Instance.new("UICorner", item)
-		itemCorner.CornerRadius = UDim.new(0, 4)
+		NormalSectionRight:AddDropdown({
+			Name = "Multi Dropdown",
+			Default = {"Head"},
+			Multi = true,
+			Values = {"Head","Body","Arms","Legs"},
+			Callback = print
+		})
 
-		item.MouseButton1Click:Connect(function()
-			dropdownButton.Text = opt
-			dropdownFrame.Visible = false
-			if callback then
-				pcall(callback, opt)
-			end
-		end)
-	end
+		NormalSectionRight:AddButton({
+			Name = "Button",
+			Callback = function()
+				print('PRINT!')
+			end,
+		})
 
-	dropdownButton.MouseButton1Click:Connect(function()
-		dropdownFrame.Visible = not dropdownFrame.Visible
-	end)
+		NormalSectionRight:AddParagraph({
+			Title = "Paragraph",
+			Content = "Very cool paragraph\nAll elements in this section\nwill not be save to the config"
+		})
+	end;
+end;
 
-	-- Auto close if clicked outside
-	game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-		if not gameProcessed and dropdownFrame.Visible then
-			local mouse = game:GetService("Players").LocalPlayer:GetMouse()
-			local inButton = dropdownButton.AbsolutePosition
-			local inSize = dropdownButton.AbsoluteSize
-			if not (mouse.X > inButton.X and mouse.X < inButton.X + inSize.X and mouse.Y > inButton.Y and mouse.Y < inButton.Y + inSize.Y) then
-				dropdownFrame.Visible = false
-			end
-		end
-	end)
-end
+DrawElements(NormalTab,'right')
 
-function elements:AddSlider(title, minValue, maxValue, defaultValue, callback)
-	local index = #elements
-	local container = Instance.new("Frame")
-	container.Parent = tabFrame
-	container.Size = UDim2.new(0, 250, 0, 40)
-	container.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-	container.BorderSizePixel = 0
+-- Single Tab --
+local SingleTab = Window:DrawTab({
+	Name = "Single Tab",
+	Icon = "banana",
+	Type = "Single"
+});
 
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 6)
-	corner.Parent = container
+DrawElements(SingleTab,'left')
 
-	local titleLabel = Instance.new("TextLabel")
-	titleLabel.Parent = container
-	titleLabel.Text = title .. ": " .. tostring(defaultValue)
-	titleLabel.Size = UDim2.new(1, -10, 0, 20)
-	titleLabel.Position = UDim2.new(0, 5, 0, 0)
-	titleLabel.Font = Enum.Font.Gotham
-	titleLabel.TextSize = 14
-	titleLabel.TextColor3 = Color3.new(1, 1, 1)
-	titleLabel.BackgroundTransparency = 1
-	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+-- Container Tab --
+local ContainerTab = Window:DrawContainerTab({
+	Name = "Extract Tabs",
+	Icon = "contact",
+});
 
-	local sliderBar = Instance.new("Frame")
-	sliderBar.Parent = container
-	sliderBar.Size = UDim2.new(0, 200, 0, 6)
-	sliderBar.Position = UDim2.new(0, 10, 0, 25)
-	sliderBar.BackgroundColor3 = Color3.fromRGB(57, 57, 57)
-	sliderBar.BorderSizePixel = 0
-	local barCorner = Instance.new("UICorner", sliderBar)
+local ExtractTab = ContainerTab:DrawTab({
+	Name = "Tab 1",
+	Type = "Double"
+});
 
-	local fillBar = Instance.new("Frame")
-	fillBar.Parent = sliderBar
-	fillBar.Size = UDim2.new(0, 0, 1, 0)
-	fillBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-	fillBar.BorderSizePixel = 0
-	local fillCorner = Instance.new("UICorner", fillBar)
+local SingleExtractTab = ContainerTab:DrawTab({
+	Name = "Tab 2",
+	Type = "Single",
+	EnableScrolling = true, -- this will make tab can scrolling (recommend)
+});
 
-	local knob = Instance.new("TextButton")
-	knob.Parent = sliderBar
-	knob.Size = UDim2.new(0, 20, 0, 20)
-	knob.Position = UDim2.new(0, 0, -0.9, 0)
-	knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	knob.BorderSizePixel = 0
-	knob.Text = ""
-	local knobCorner = Instance.new("UICorner", knob)
-	knobCorner.CornerRadius = UDim.new(1, 0)
+DrawElements(ExtractTab,"left");
+DrawElements(ExtractTab,"right");
 
-	local dragging = false
-	local UserInputService = game:GetService("UserInputService")
+DrawElements(SingleExtractTab,"left");
+DrawElements(SingleExtractTab,"right");
 
-	local function updateSlider(inputX)
-		local sliderPos = sliderBar.AbsolutePosition.X
-		local sliderSize = sliderBar.AbsoluteSize.X
-		local relativeX = math.clamp(inputX - sliderPos, 0, sliderSize)
-		local percent = relativeX / sliderSize
-		local value = math.floor(minValue + (maxValue - minValue) * percent)
+Window:DrawCategory({
+	Name = "Misc"
+});
 
-		fillBar.Size = UDim2.new(0, relativeX, 1, 0)
-		knob.Position = UDim2.new(0, relativeX - knob.Size.X.Offset / 2, -0.9, 0)
+local SettingTab = Window:DrawTab({
+	Icon = "settings-3",
+	Name = "Settings",
+	Type = "Single",
+	EnableScrolling = true
+});
 
-		titleLabel.Text = title .. ": " .. tostring(value)
+local ThemeTab = Window:DrawTab({
+	Icon = "paintbrush",
+	Name = "Themes",
+	Type = "Single"
+});
 
-		if callback then
-			pcall(callback, value)
-		end
-	end
+local Settings = SettingTab:DrawSection({
+	Name = "UI Settings",
+});
 
-	knob.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-			dragging = true
-		end
-	end)
+Settings:AddToggle({
+	Name = "Alway Show Frame",
+	Default = false,
+	Callback = function(v)
+		Window.AlwayShowTab = v;
+	end,
+});
 
-	UserInputService.InputEnded:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-			dragging = false
-		end
-	end)
+Settings:AddColorPicker({
+	Name = "Highlight",
+	Default = Compkiller.Colors.Highlight,
+	Callback = function(v)
+		Compkiller.Colors.Highlight = v;
+		Compkiller:RefreshCurrentColor();
+	end,
+});
 
-	UserInputService.InputChanged:Connect(function(input)
-		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-			updateSlider(input.Position.X)
-		end
-	end)
+Settings:AddColorPicker({
+	Name = "Toggle Color",
+	Default = Compkiller.Colors.Toggle,
+	Callback = function(v)
+		Compkiller.Colors.Toggle = v;
+		
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
 
-	-- Set to default
-	task.wait()
-	local sliderSize = sliderBar.AbsoluteSize.X
-	local percent = (defaultValue - minValue) / (maxValue - minValue)
-	updateSlider(sliderBar.AbsolutePosition.X + sliderSize * percent)
+Settings:AddColorPicker({
+	Name = "Drop Color",
+	Default = Compkiller.Colors.DropColor,
+	Callback = function(v)
+		Compkiller.Colors.DropColor = v;
 
-	table.insert(elements, container)
-end
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
 
-	function elements:AddButton(text, callback)
-		local btn = Instance.new("TextButton")
-		btn.Parent = tabFrame
-		btn.Size = UDim2.new(0, 200, 0, 30)
-		btn.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
-		btn.TextColor3 = Color3.new(1, 1, 1)
-		btn.Font = Enum.Font.Gotham
-		btn.Text = text
-		btn.TextSize = 14
-		btn.BorderSizePixel = 0
+Settings:AddColorPicker({
+	Name = "Risky",
+	Default = Compkiller.Colors.Risky,
+	Callback = function(v)
+		Compkiller.Colors.Risky = v;
 
-		btn.MouseButton1Click:Connect(function()
-			pcall(callback)
-		end)
-	end
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
 
-	function elements:AddToggle(title, defaultState, callback)
-		local container = Instance.new("Frame")
-		container.Parent = tabFrame
-		container.Size = UDim2.new(0, 250, 0, 30)
-		container.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-		container.BorderSizePixel = 0
+Settings:AddColorPicker({
+	Name = "Mouse Enter",
+	Default = Compkiller.Colors.MouseEnter,
+	Callback = function(v)
+		Compkiller.Colors.MouseEnter = v;
 
-		local corner = Instance.new("UICorner")
-		corner.CornerRadius = UDim.new(0, 6)
-		corner.Parent = container
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
 
-		local titleLabel = Instance.new("TextLabel")
-		titleLabel.Parent = container
-		titleLabel.Text = title
-		titleLabel.Size = UDim2.new(0, 180, 1, 0)
-		titleLabel.Position = UDim2.new(0, 15, 0, 0)
-		titleLabel.Font = Enum.Font.Gotham
-		titleLabel.TextSize = 14
-		titleLabel.TextColor3 = Color3.new(1, 1, 1)
-		titleLabel.BackgroundTransparency = 1
-		titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+Settings:AddColorPicker({
+	Name = "Block Color",
+	Default = Compkiller.Colors.BlockColor,
+	Callback = function(v)
+		Compkiller.Colors.BlockColor = v;
 
-		local toggleButton = Instance.new("TextButton")
-		toggleButton.Parent = container
-		toggleButton.Size = UDim2.new(0, 30, 0, 30)
-		toggleButton.Font = Enum.Font.GothamBold
-		toggleButton.TextSize = 20
-		toggleButton.TextColor3 = Color3.new(1, 1, 1)
-		toggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-		toggleButton.BorderSizePixel = 0
-		toggleButton.Text = defaultState and "[✓]" or "[ ]"
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
 
-		local toggleCorner = Instance.new("UICorner")
-		toggleCorner.CornerRadius = UDim.new(0, 4)
-		toggleCorner.Parent = toggleButton
+Settings:AddColorPicker({
+	Name = "Background Color",
+	Default = Compkiller.Colors.BGDBColor,
+	Callback = function(v)
+		Compkiller.Colors.BGDBColor = v;
 
-		local state = defaultState
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
 
-		toggleButton.MouseButton1Click:Connect(function()
-			state = not state
-			toggleButton.Text = state and "[✓]" or "[ ]"
-			if callback then
-				pcall(callback, state)
-			end
-		end)
-	end
+Settings:AddColorPicker({
+	Name = "Block Background Color",
+	Default = Compkiller.Colors.BlockBackground,
+	Callback = function(v)
+		Compkiller.Colors.BlockBackground = v;
 
-	table.insert(self.Tabs, { Name = name, Frame = tabFrame })
-	return elements
-end
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
 
-return DriftwynTabSystem
+Settings:AddColorPicker({
+	Name = "Stroke Color",
+	Default = Compkiller.Colors.StrokeColor,
+	Callback = function(v)
+		Compkiller.Colors.StrokeColor = v;
+
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
+
+Settings:AddColorPicker({
+	Name = "High Stroke Color",
+	Default = Compkiller.Colors.HighStrokeColor,
+	Callback = function(v)
+		Compkiller.Colors.HighStrokeColor = v;
+
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
+
+Settings:AddColorPicker({
+	Name = "Switch Color",
+	Default = Compkiller.Colors.SwitchColor,
+	Callback = function(v)
+		Compkiller.Colors.SwitchColor = v;
+
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
+
+Settings:AddColorPicker({
+	Name = "Line Color",
+	Default = Compkiller.Colors.LineColor,
+	Callback = function(v)
+		Compkiller.Colors.LineColor = v;
+
+		Compkiller:RefreshCurrentColor(v);
+	end,
+});
+
+Settings:AddButton({
+	Name = "Get Theme",
+	Callback = function()
+		print(Compkiller:GetTheme())
+		
+		Notifier.new({
+			Title = "Notification",
+			Content = "Copied Them Color to your clipboard",
+			Duration = 5,
+			Icon = "rbxassetid://100247209978923"
+		});
+	end,
+});
+
+ThemeTab:DrawSection({
+	Name = "UI Themes"
+}):AddDropdown({
+	Name = "Select Theme",
+	Default = "Default",
+	Values = {
+		"Default",
+		"Dark Green",
+		"Dark Blue",
+		"Purple Rose",
+		"Skeet"
+	},
+	Callback = function(v)
+		Compkiller:SetTheme(v)
+	end,
+})
+
+-- Creating Config Tab --
+local ConfigUI = Window:DrawConfig({
+	Name = "Config",
+	Icon = "folder",
+	Config = ConfigManager
+});
+
+ConfigUI:Init();
